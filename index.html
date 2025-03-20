@@ -36,18 +36,23 @@
         }
         /* Correct the z-index for background-container */
         .background-container {
-            width: 600px;
-            height: 400px;
+            /* Smaller dimensions */
+            width: 500px;
+            height: 300px;
+            
+            /* Adjust vertical position - move down from center */
             position: absolute;
-            top: 50%;
+            top: 60%;
             left: 50%;
             transform: translate(-50%, -50%);
+            
+            /* Rest of your properties */
             z-index: -1;
             background-image: url('https://raw.githubusercontent.com/voreskovic/flowise_web_app/main/vidavii_full_logo.avif');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center center;
-            opacity: 0.3;
+            opacity: 0.2;
         }
         
         /* Make sure chatbot container is separate */
