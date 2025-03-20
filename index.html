@@ -30,44 +30,32 @@
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Work Sans', sans-serif;
-            
-            /* Remove any existing background image from the body */
-            background-image: none;
-            
-            /* Add a solid background color if desired */
-            background-color: #ffffff;
-            
+            font-family: 'Work Sans', sans-serif; 
             /* Position relative to allow absolute positioning of the background container */
             position: relative;
         }
-        /* Create a container for your background image */
+        /* Correct the z-index for background-container */
         .background-container {
-            /* Fixed dimensions - adjust as needed */
             width: 600px;
             height: 400px;
-            
-            /* Center the container */
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            
-            /* Set z-index to be behind content */
             z-index: -1;
-            
-            /* Set your background image */
             background-image: url('https://raw.githubusercontent.com/voreskovic/flowise_web_app/main/vidavii_full_logo.avif');
-            background-size: contain; /* or 'cover' depending on preference */
+            background-size: contain;
             background-repeat: no-repeat;
             background-position: center center;
-            
-            /* Add opacity */
-            opacity: 0.3; /* Adjust value as needed (0.0 to 1.0) */
+            opacity: 0.3;
         }
+        
+        /* Make sure chatbot container is separate */
         #chatbot-container {
             position: relative;
             z-index: 1;
+            width: 100%;
+            height: 100%;
         }
     
         .chatbot-window {
@@ -84,8 +72,8 @@
     </style>
 </head>
 <body>
-    <div id="chatbot-container" class="background-container"></div>
-
+    <div class="background-container"></div>
+    <div id="chatbot-container"></div>
     <script type="module">
         import Chatbot from "https://cdn.jsdelivr.net/npm/flowise-embed/dist/web.js"
         
