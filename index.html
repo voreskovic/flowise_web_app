@@ -172,56 +172,74 @@
             }
         })
 
-        document.addEventListener('DOMContentLoaded', function() {
-          // Wait for Flowise to initialize and render the starter prompts
-          const checkForPromptsInterval = setInterval(() => {
-            const promptElements = document.querySelectorAll('.starter-prompt, .starter-message');
-            
-            if (promptElements.length > 0) {
-              clearInterval(checkForPromptsInterval);
-              
-              // Once prompts are found, modify their behavior
-              const config = Chatbot.getConfig();
-              const fullPrompts = config.theme.chatWindow.fullPrompts;
-              
-              promptElements.forEach((element, index) => {
-                if (index < fullPrompts.length) {
-                  // Store the original click handler
-                  const originalClickHandler = element.onclick;
-                  
-                  // Override with new handler that uses fullPrompts
-                  element.onclick = function(e) {
-                    // Prevent default behavior
-                    e.preventDefault();
+      // Wait for Flowise to fully initialize
+      window.addEventListener('load', function() {
+        // Give Flowise a moment to render the UI
+        setTimeout(() => {
+          const chatbotContainer = document.getElementById('chatbot-container');
+          const config = Chatbot.init.arguments[0]; // Access the config passed to Chatbot.init
+          
+          // Create a mutation observer to detect when starter prompts are added to the DOM
+          const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+              if (mutation.addedNodes.length) {
+                const promptButtons = document.querySelectorAll('.starter-message, .starter-prompt, .message-bubble');
+                
+                // Filter to only find starter prompt elements that haven't been processed
+                promptButtons.forEach((button, index) => {
+                  // Check if this button hasn't been processed yet
+                  if (!button.dataset.processed && index < config.theme.chatWindow.fullPrompts.length) {
+                    // Mark as processed to avoid double-binding
+                    button.dataset.processed = 'true';
                     
-                    // Get the input field
-                    const inputField = document.querySelector('.chatbot-input');
-                    if (inputField) {
-                      // Set the input field value to the full prompt
-                      inputField.value = fullPrompts[index];
+                    // Store the original text
+                    const displayText = button.textContent;
+                    
+                    // Replace click handler
+                    button.addEventListener('click', function(e) {
+                      // Prevent default Flowise handling
+                      e.stopPropagation();
                       
-                      // Trigger a send button click or submit event
-                      const sendButton = document.querySelector('.chatbot-send-button');
-                      if (sendButton) {
-                        sendButton.click();
-                      } else {
-                        // Alternative: create and dispatch an enter key event
+                      // Get the full prompt
+                      const fullPrompt = config.theme.chatWindow.fullPrompts[index];
+                      
+                      // Find the input field - try various possible selectors
+                      const inputField = document.querySelector('.chatbot-input, .chat-input, textarea[placeholder], input[type="text"]');
+                      
+                      if (inputField) {
+                        // Set value and focus
+                        inputField.value = fullPrompt;
+                        inputField.focus();
+                        
+                        // Simulate Enter key press
+                        // This approach more reliably triggers Flowise's internal handlers
                         const enterEvent = new KeyboardEvent('keydown', {
+                          bubbles: true,
+                          cancelable: true,
                           key: 'Enter',
                           code: 'Enter',
-                          which: 13,
                           keyCode: 13,
-                          bubbles: true
+                          which: 13
                         });
+                        
                         inputField.dispatchEvent(enterEvent);
+                      } else {
+                        console.error('Could not find input field');
                       }
-                    }
-                  };
-                }
-              });
-            }
-          }, 500); // Check every 500ms
-        });
+                    });
+                  }
+                });
+              }
+            });
+          });
+          
+          // Start observing the chatbot container for changes
+          observer.observe(chatbotContainer, { 
+            childList: true, 
+            subtree: true 
+          });
+        }, 1000); // Wait 1 second for Flowise to initialize
+      });
     </script>
 </body>
 </html>
