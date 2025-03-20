@@ -93,14 +93,15 @@
                     fontSize: 14,
                     starterPrompts: [
                         'How can I improve my well-being?',
-                        'I am interested in immunity boosting,
-                        what would you recommend for me?',
-                        'I do not feel so good.
-                        I have 39 degrees celsius temperature
-                        for the last 4 weeks on and off.
-                        I feel weak and sleepy.'
+                        'I am interested in immunity boosting...',
+                        'I do not feel so good...'
                     ],
-                    starterPromptFontSize: 15,
+                    fullPrompts: [
+                        'How can I improve my well-being?',
+                        'I am interested in immunity boosting, what would you recommend for me?',
+                        'I do not feel so good. I have 39 degrees celsius temperature for the last 4 weeks on and off. I feel weak and sleepy.'
+                    ],
+                    starterPromptFontSize: 10,
                     clearChatOnReload: false,
                     botMessage: {
                         backgroundColor: "#ECFEFF",
@@ -140,6 +141,57 @@
                 }
             }
         })
+
+        document.addEventListener('DOMContentLoaded', function() {
+          // Wait for Flowise to initialize and render the starter prompts
+          const checkForPromptsInterval = setInterval(() => {
+            const promptElements = document.querySelectorAll('.starter-prompt, .starter-message');
+            
+            if (promptElements.length > 0) {
+              clearInterval(checkForPromptsInterval);
+              
+              // Once prompts are found, modify their behavior
+              const config = Chatbot.getConfig();
+              const fullPrompts = config.theme.chatWindow.fullPrompts;
+              
+              promptElements.forEach((element, index) => {
+                if (index < fullPrompts.length) {
+                  // Store the original click handler
+                  const originalClickHandler = element.onclick;
+                  
+                  // Override with new handler that uses fullPrompts
+                  element.onclick = function(e) {
+                    // Prevent default behavior
+                    e.preventDefault();
+                    
+                    // Get the input field
+                    const inputField = document.querySelector('.chatbot-input');
+                    if (inputField) {
+                      // Set the input field value to the full prompt
+                      inputField.value = fullPrompts[index];
+                      
+                      // Trigger a send button click or submit event
+                      const sendButton = document.querySelector('.chatbot-send-button');
+                      if (sendButton) {
+                        sendButton.click();
+                      } else {
+                        // Alternative: create and dispatch an enter key event
+                        const enterEvent = new KeyboardEvent('keydown', {
+                          key: 'Enter',
+                          code: 'Enter',
+                          which: 13,
+                          keyCode: 13,
+                          bubbles: true
+                        });
+                        inputField.dispatchEvent(enterEvent);
+                      }
+                    }
+                  };
+                }
+              });
+            }
+          }, 500); // Check every 500ms
+        });
     </script>
 </body>
 </html>
