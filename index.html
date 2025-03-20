@@ -34,25 +34,26 @@
             /* Position relative to allow absolute positioning of the background container */
             position: relative;
         }
-        /* Correct the z-index for background-container */
-        .background-container {
-            /* Smaller dimensions */
-            width: 500px;
-            height: 300px;
-            
-            /* Adjust vertical position - move down from center */
-            position: absolute;
-            top: 60%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            
-            /* Rest of your properties */
-            z-index: -1;
+        body::before {
+            content: "";
+            position: fixed;  /* Fixed position so it stays in view */
+            width: 350px;     /* Smaller fixed width */
+            height: 350px;    /* Fixed height */
+            top: 50%;         /* Center vertically */
+            left: 50%;        /* Center horizontally */
+            transform: translate(-50%, -50%);  /* Center the element itself */
             background-image: url('https://raw.githubusercontent.com/voreskovic/flowise_web_app/main/vidavii_full_logo.avif');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center center;
-            opacity: 0.2;
+            opacity: 0.2;     /* More subtle opacity */
+            z-index: -1;      /* Behind all content */
+            pointer-events: none;  /* Don't interfere with clicking */
+        }
+        
+        /* Remove your previous background-container class */
+        .background-container {
+            display: none;
         }
         
         /* Make sure chatbot container is separate */
